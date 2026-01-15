@@ -3,5 +3,5 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="button">#023E8A</color>
-    <color name="selected_item">#545454</color>
+    <color name="selected_item">#949494</color>
 </resources>

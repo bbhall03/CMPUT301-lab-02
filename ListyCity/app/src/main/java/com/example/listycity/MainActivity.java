@@ -1,5 +1,8 @@
 package com.example.listycity;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
@@ -77,6 +80,10 @@ public class MainActivity extends AppCompatActivity {
         Button confirmButton = (Button) findViewById(R.id.confirm_button);
         TextInputEditText newCityInput = (TextInputEditText) findViewById(R.id.new_city_text);
 
+        // Set newCityInput and confirmButton as initially invisible
+        newCityInput.setVisibility(GONE);
+        confirmButton.setVisibility(GONE);
+
         // Set listener to get value of last selected city list item
         cityList.setOnItemClickListener((parent, view, position, id) -> {
             selectedPosition = position;
@@ -87,6 +94,8 @@ public class MainActivity extends AppCompatActivity {
         // Focus on input box when add button is clicked
         addButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                newCityInput.setVisibility(VISIBLE);
+                confirmButton.setVisibility(VISIBLE);
                 newCityInput.requestFocus();
             }
         });
@@ -109,6 +118,8 @@ public class MainActivity extends AppCompatActivity {
                     cityAdapter.notifyDataSetChanged();
                     newCityInput.setText("");
                 }
+                confirmButton.setVisibility(GONE);
+                newCityInput.setVisibility(GONE);
             }
         });
     }
