@@ -4,13 +4,17 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -27,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayAdapter<String> cityAdapter;
     ArrayList<String> dataList;
     String selectedCity;
+    int selectedPosition = -1;
 
     @SuppressLint("ResourceAsColor")
     @Override
@@ -47,7 +52,23 @@ public class MainActivity extends AppCompatActivity {
         dataList = new ArrayList<>();
         dataList.addAll(Arrays.asList(cities));
 
-        cityAdapter = new ArrayAdapter<>(this, R.layout.content, dataList);
+        cityAdapter = new ArrayAdapter<>(this, R.layout.content, dataList) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                // Change background of current selected cityList item
+                if (position == selectedPosition) {
+                    view.setBackgroundColor(
+                            ContextCompat.getColor(getContext(), R.color.selected_item)
+                    );
+                } else {
+                    view.setBackgroundColor(
+                            ContextCompat.getColor(getContext(), R.color.white)
+                    );
+                }
+                return view;
+            }
+        };
         cityList.setAdapter(cityAdapter);
 
         // initialize component variables
@@ -58,23 +79,28 @@ public class MainActivity extends AppCompatActivity {
 
         // Set listener to get value of last selected city list item
         cityList.setOnItemClickListener((parent, view, position, id) -> {
+            selectedPosition = position;
             selectedCity = dataList.get(position);
+            cityAdapter.notifyDataSetChanged();
         });
 
-        // Focus on
+        // Focus on input box when add button is clicked
         addButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 newCityInput.requestFocus();
             }
         });
+        // Delete selected list item from list when delete button is clicked
         deleteButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if(selectedCity != null) {
                     dataList.remove(selectedCity);
+                    selectedPosition = -1;
                     cityAdapter.notifyDataSetChanged();
                 }
             }
         });
+        // Add city to list when confirm button is clicked if the input is not empty
         confirmButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 String addCity = String.valueOf(newCityInput.getText());
